@@ -1,0 +1,49 @@
+@startuml
+
+class Perfil{
+Integer id;
+String descricao
+
+}
+
+class Usuario{
+Long id;
+String nome;
+String endereco;
+String telefone;
+Perfil perfil;
+String email;
+String senha;
+
+}
+
+class Rifa{
+Long id;
+String descricaoRifa;
+BigDecimal valorNumero;
+Integer quantidadeNumero; 
+
+}
+
+class NumeroRifa{
+    Long id;
+    Long numero;
+    String status;
+    Rifa rifa;
+}
+
+class Reserva{
+Long id;
+NumeroRifa numeroRifa;
+Usuario usuario;
+Date dataReserva
+
+}
+
+Perfil "1" <-- "*" Usuario
+Usuario "1" <-- "*" Reserva
+Rifa "1" <-- "*" NumeroRifa
+NumeroRifa "1" <-- "0..1" Reserva
+
+
+@enduml
