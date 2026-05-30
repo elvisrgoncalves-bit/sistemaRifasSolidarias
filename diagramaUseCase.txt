@@ -1,0 +1,51 @@
+@startuml
+
+left to right direction
+
+actor usuario as u
+actor organizador as o
+actor administrador as a
+
+rectangle "Rifa Beneficente" {
+
+  usecase "Logar no Site" as UC1
+  usecase "Deslogar no Site" as UC2
+  usecase "Criar Rifa" as UC3
+  usecase "Cadastrar Organizador" as UC4
+  usecase "Excluir Organizador" as UC12
+  usecase "Excluir participante" as UC6
+  usecase "Escolher número" as UC7
+  usecase "Marcar como número pago" as UC8
+  usecase "Sortear Rifa" as UC9
+  usecase "Visualizar  Rifa" as UC10
+  usecase "Cadastrar-se" as UC11
+  usecase "Visualizar Participantes" as UC13
+  
+
+}
+
+u --> UC1
+u --> UC2
+u --> UC7
+u --> UC10
+u --> UC11
+
+o --> UC1
+o --> UC2
+o --> UC3
+o --> UC8
+o --> UC9
+o --> UC10
+o --> UC13
+
+a --> UC1
+a --> UC2
+a --> UC4
+a --> UC6
+a --> UC12
+
+
+
+
+
+@enduml
