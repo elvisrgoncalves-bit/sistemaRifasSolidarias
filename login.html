@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Entrar | Rifas Solidarias</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body class="auth-page">
+  <main class="auth-shell">
+    <a class="brand brand-auth" href="login.html" aria-label="Rifas Solidarias">
+      <span class="brand-mark"><i data-lucide="ticket-heart"></i></span>
+      <span>
+        <strong>Rifas</strong>
+        <em>Solidarias</em>
+      </span>
+    </a>
+
+    <section class="auth-card" aria-labelledby="login-title">
+      <div class="auth-heading">
+        <h1 id="login-title">Bem-vindo de volta!</h1>
+        <p>Entre para acessar sua conta</p>
+      </div>
+
+      <form id="loginForm"
+      class="form-stack"
+      action="api/login.php"
+      method="POST">
+        <label class="field">
+          <span>E-mail</span>
+          <span class="input-icon">
+            <i data-lucide="mail"></i>
+            <input type="email" name="email" autocomplete="email" placeholder="Digite seu e-mail" required>
+          </span>
+        </label>
+
+        <label class="field">
+          <span>Senha</span>
+          <span class="input-icon">
+            <i data-lucide="lock-keyhole"></i>
+            <input id="passwordInput" type="password" name="senha" autocomplete="current-password" placeholder="Digite sua senha" required>
+            <button class="icon-button input-action" type="button" id="togglePassword" aria-label="Mostrar senha">
+              <i data-lucide="eye-off"></i>
+            </button>
+          </span>
+        </label>
+
+        <div class="form-row">
+          <label class="check-row">
+            <input type="checkbox" name="lembrar" checked>
+            <span>Lembrar-me</span>
+          </label>
+          <a href="#" data-open-recovery>Esqueci minha senha</a>
+        </div>
+
+        <button class="btn btn-primary" type="submit">Entrar</button>
+      </form>
+
+      <div class="divider"><span>Ainda nao tem uma conta?</span></div>
+
+      <button class="btn btn-outline" type="button" id="openRegister">
+        <i data-lucide="user-plus"></i>
+        Criar minha conta
+      </button>
+
+      <p class="secure-note">
+        <i data-lucide="shield-check"></i>
+        Seus dados estao protegidos conosco.
+      </p>
+    </section>
+
+    <section class="auth-promo" aria-label="Mensagem institucional">
+      <div class="promo-art">
+        <span class="gift-box"><i data-lucide="gift"></i></span>
+        <span class="floating-ticket"><i data-lucide="ticket-heart"></i></span>
+        <span class="floating-heart"><i data-lucide="heart"></i></span>
+      </div>
+      <div>
+        <h2>Sua rifa pode transformar vidas!</h2>
+        <p>Crie sua rifa, compartilhe com quem voce confia e ajude a realizar sonhos.</p>
+      </div>
+    </section>
+  </main>
+
+  <dialog class="modal" id="registerModal">
+    <form id="registerForm" class="modal-card form-stack" method="dialog" novalidate>
+      <div class="modal-head">
+        <div>
+          <h2>Criar conta</h2>
+          <p>Preencha os dados para comecar.</p>
+        </div>
+        <button class="icon-button" type="button" data-close-modal aria-label="Fechar">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+
+      <label class="field">
+        <span>Nome</span>
+        <span class="input-icon">
+          <i data-lucide="user"></i>
+          <input type="text" name="nome" placeholder="Seu nome completo" required>
+        </span>
+      </label>
+
+      <label class="field">
+        <span>E-mail</span>
+        <span class="input-icon">
+          <i data-lucide="mail"></i>
+          <input type="email" name="email" placeholder="voce@email.com" required>
+        </span>
+      </label>
+
+      <label class="field">
+        <span>Telefone</span>
+        <span class="input-icon">
+          <i data-lucide="phone"></i>
+          <input type="tel" name="telefone" placeholder="(00) 00000-0000">
+        </span>
+      </label>
+
+      <label class="field">
+        <span>Senha</span>
+        <span class="input-icon">
+          <i data-lucide="lock-keyhole"></i>
+          <input type="password" name="senha" minlength="6" placeholder="Minimo de 6 caracteres" required>
+        </span>
+      </label>
+
+      <button class="btn btn-primary" type="submit">Cadastrar</button>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script src="assets/js/api.js"></script>
+  <script src="assets/js/login.js"></script>
+</body>
+</html>
