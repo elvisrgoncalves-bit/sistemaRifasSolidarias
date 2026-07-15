@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       const usuario = await RifasAPI.login(payload);
       localStorage.setItem("rifas_user", JSON.stringify(usuario));
-      window.location.href = "dashboard.html";
+      window.location.href = "dashboard.php";
     } catch (error) {
       RifasUI.toast(error.message);
     }

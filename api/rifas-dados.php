@@ -7,10 +7,17 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
     session_start();
 }
 
-function carregar_rifas_do_banco(): array
+function carregar_rifas_do_banco(?int $usuarioCriacao = null): array
 {
     $pdo = db();
-    $stmt = $pdo->query('SELECT * FROM rifa ORDER BY id DESC');
+
+    if ($usuarioCriacao) {
+        $stmt = $pdo->prepare('SELECT * FROM rifa WHERE usuario_criacao = ? ORDER BY id DESC');
+        $stmt->execute([$usuarioCriacao]);
+    } else {
+        $stmt = $pdo->query('SELECT * FROM rifa ORDER BY id DESC');
+    }
+
     $rifas = [];
 
     foreach ($stmt->fetchAll() as $rifa) {
@@ -48,5 +55,6 @@ function carregar_rifas_do_banco(): array
     return $rifas;
 }
 
-$rifasDoBanco = carregar_rifas_do_banco();
+$usuarioLogadoId = isset($_SESSION['usuario_id']) ? (int) $_SESSION['usuario_id'] : null;
+$rifasDoBanco = carregar_rifas_do_banco($usuarioLogadoId);
 $rifaAtual = $rifasDoBanco[0] ?? null;

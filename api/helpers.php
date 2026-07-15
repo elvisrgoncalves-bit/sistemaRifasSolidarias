@@ -76,7 +76,7 @@ function format_rifa(array $rifa, array $numeros = []): array
         'quantidadeNumero' => (int) $rifa['quantidade_numero'],
         'reservados' => $reservados,
         'dataSorteio' => 'A definir',
-        'linkPublico' => 'localhost/sistemaRifasSolidarias/dashboard.html?rifa=' . (int) $rifa['id'],
+        'linkPublico' => 'localhost/sistemaRifasSolidarias/dashboard.php?rifa=' . (int) $rifa['id'],
         'numeros' => array_map(static fn (array $item): array => [
             'numero' => (int) $item['numero'],
             'status' => $item['status'],

@@ -39,25 +39,37 @@ document.addEventListener("DOMContentLoaded", () => {
       ...(raffle || {})
     };
 
-    if (!Array.isArray(safeRaffle.numeros) && safeRaffle.quantidadeNumero > 0) {
+    if (!Array.isArray(safeRaffle.numeros)) {
+      safeRaffle.numeros = [];
+    }
+
+    if (safeRaffle.numeros.length === 0 && safeRaffle.quantidadeNumero > 0) {
       safeRaffle.numeros = Array.from({ length: safeRaffle.quantidadeNumero }, (_, index) => ({
         numero: index + 1,
         status: "disponivel"
       }));
-    } else if (!Array.isArray(safeRaffle.numeros)) {
-      safeRaffle.numeros = [];
     }
 
     return safeRaffle;
   }
 
+  function normalizeRaffleList(input) {
+    if (Array.isArray(input)) {
+      return input.map(normalizeRaffleData).filter((item) => item.id);
+    }
+
+    const single = normalizeRaffleData(input?.id ? input : null);
+    return single.id ? [single] : [];
+  }
+
   const initialRaffle = parseInitialRaffleData();
+  const initialRaffles = normalizeRaffleList(initialRaffle);
   const state = {
-    rifa: normalizeRaffleData(initialRaffle?.id ? initialRaffle : null),
+    rifas: initialRaffles,
+    rifa: initialRaffles[0] ? initialRaffles[0] : normalizeRaffleData(null),
     selecionados: new Set()
   };
 
-  const numbersGrid = document.getElementById("numbersGrid");
   const selectedNumbers = document.getElementById("selectedNumbers");
   const selectedCount = document.getElementById("selectedCount");
   const totalToPay = document.getElementById("totalToPay");
@@ -105,9 +117,15 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function renderNumbers() {
-    numbersGrid.innerHTML = "";
+    document.querySelectorAll('[data-rifa-grid]').forEach((grid) => {
+      grid.innerHTML = "";
+    });
 
-    state.rifa.numeros.forEach((item) => {
+    const currentGrid = document.querySelector(`[data-rifa-grid="${state.rifa.id}"]`);
+    if (!currentGrid) return;
+
+    const numeros = Array.isArray(state.rifa?.numeros) ? state.rifa.numeros : [];
+    numeros.forEach((item) => {
       const button = document.createElement("button");
       button.type = "button";
       button.className = `number-button ${statusClass(item.status)}`;
@@ -129,15 +147,30 @@ document.addEventListener("DOMContentLoaded", () => {
         renderSelection();
       });
 
-      numbersGrid.appendChild(button);
+      currentGrid.appendChild(button);
     });
   }
 
   function renderSelection() {
     const numeros = Array.from(state.selecionados).sort((a, b) => a - b);
-    selectedNumbers.innerHTML = "";
-    selectedCount.textContent = numeros.length;
-    totalToPay.textContent = RifasUI.money(numeros.length * state.rifa.valorNumero);
+
+    const selectionContainer = document.getElementById("selectedNumbers");
+    const selectionCount = document.getElementById("selectedCount");
+    const selectionTotal = document.getElementById("totalToPay");
+
+    if (selectionCount) {
+      selectionCount.textContent = numeros.length;
+    }
+
+    if (selectionTotal) {
+      selectionTotal.textContent = RifasUI.money(numeros.length * state.rifa.valorNumero);
+    }
+
+    if (!selectionContainer || !(selectionContainer instanceof HTMLElement)) {
+      return;
+    }
+
+    selectionContainer.innerHTML = "";
 
     numeros.forEach((numero) => {
       const chip = document.createElement("button");
@@ -149,7 +182,7 @@ document.addEventListener("DOMContentLoaded", () => {
         renderNumbers();
         renderSelection();
       });
-      selectedNumbers.appendChild(chip);
+      selectionContainer.appendChild(chip);
     });
   }
 
@@ -159,11 +192,11 @@ document.addEventListener("DOMContentLoaded", () => {
       document.getElementById("userName").textContent = storedUser.nome.split(" ")[0];
     }
 
-    if (initialRaffle?.id) {
+    if (state.rifas.length) {
       state.rifa = normalizeRaffleData({
         ...state.rifa,
-        ...initialRaffle,
-        numeros: initialRaffle.numeros || state.rifa.numeros
+        ...state.rifas[0],
+        numeros: state.rifas[0].numeros || state.rifa.numeros
       });
     } else {
       state.rifa = normalizeRaffleData(state.rifa);
@@ -180,28 +213,72 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  const visualizarRifaButton = document.getElementById("visualizarRifa");
-  const numbersPanel = document.getElementById("numeros");
+  function syncRaffleButtons() {
+    document.querySelectorAll(".btn-select-rifa").forEach((button) => {
+      const rifaId = Number(button.dataset.rifaId);
+      const panel = document.querySelector(`[data-rifa-panel="${rifaId}"]`);
+      const isActive = state.rifa?.id === rifaId && panel && !panel.classList.contains("is-hidden");
 
-  visualizarRifaButton?.addEventListener("click", () => {
-    if (!numbersPanel) return;
+      button.innerHTML = isActive
+        ? '<i data-lucide="eye-off"></i>Ocultar Números'
+        : '<i data-lucide="eye"></i>Visualizar Números';
+    });
 
-    numbersPanel.classList.remove("is-hidden");
-    numbersPanel.setAttribute("aria-hidden", "false");
-    numbersPanel.scrollIntoView({ behavior: "smooth", block: "start" });
+    if (window.lucide) {
+      window.lucide.createIcons();
+    }
+  }
+
+  document.querySelectorAll(".btn-select-rifa").forEach((button) => {
+    button.addEventListener("click", () => {
+      const rifaId = Number(button.dataset.rifaId);
+      const selectedRaffle = state.rifas.find((item) => item.id === rifaId);
+      const panel = document.querySelector(`[data-rifa-panel="${rifaId}"]`);
+
+      if (!selectedRaffle || !panel) {
+        return;
+      }
+
+      const isAlreadyActive = state.rifa?.id === rifaId && !panel.classList.contains("is-hidden");
+
+      if (isAlreadyActive) {
+        document.querySelectorAll('[data-rifa-panel]').forEach((item) => {
+          item.classList.add("is-hidden");
+          item.setAttribute("aria-hidden", "true");
+        });
+        syncRaffleButtons();
+        return;
+      }
+
+      document.querySelectorAll('[data-rifa-panel]').forEach((item) => {
+        item.classList.add("is-hidden");
+        item.setAttribute("aria-hidden", "true");
+      });
+
+      state.rifa = normalizeRaffleData(selectedRaffle);
+      state.selecionados.clear();
+      renderRaffle();
+      renderNumbers();
+      renderSelection();
+
+      panel.classList.remove("is-hidden");
+      panel.setAttribute("aria-hidden", "false");
+      panel.scrollIntoView({ behavior: "smooth", block: "start" });
+      syncRaffleButtons();
+    });
   });
 
   document.querySelectorAll("[data-close-modal]").forEach((button) => {
     button.addEventListener("click", () => button.closest("dialog").close());
   });
 
-  document.getElementById("clearSelection").addEventListener("click", () => {
+  document.getElementById("clearSelection")?.addEventListener("click", () => {
     state.selecionados.clear();
     renderNumbers();
     renderSelection();
   });
 
-  document.getElementById("continueReservation").addEventListener("click", () => {
+  document.getElementById("continueReservation")?.addEventListener("click", () => {
     if (!state.selecionados.size) {
       RifasUI.toast("Escolha pelo menos um numero.");
       return;
@@ -209,7 +286,7 @@ document.addEventListener("DOMContentLoaded", () => {
     reservationModal.showModal();
   });
 
-  reservationForm.addEventListener("submit", async (event) => {
+  reservationForm?.addEventListener("submit", async (event) => {
     event.preventDefault();
     if (!reservationForm.reportValidity()) return;
 
@@ -230,17 +307,17 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  document.getElementById("copyLink").addEventListener("click", async () => {
+  document.getElementById("copyLink")?.addEventListener("click", async () => {
     await navigator.clipboard.writeText(state.rifa.linkPublico);
     RifasUI.toast("Link copiado.");
   });
 
-  document.getElementById("shareRaffle").addEventListener("click", () => {
+  document.getElementById("shareRaffle")?.addEventListener("click", () => {
     navigator.share?.({ title: state.rifa.titulo, text: state.rifa.descricao, url: `https://${state.rifa.linkPublico}` })
       || RifasUI.toast("Use os botoes de compartilhamento ao lado.");
   });
 
-  document.getElementById("sharePlatform").addEventListener("click", async () => {
+  document.getElementById("sharePlatform")?.addEventListener("click", async () => {
     try {
       await RifasAPI.compartilhar({ tipo: "plataforma" });
     } catch (error) {
@@ -249,7 +326,7 @@ document.addEventListener("DOMContentLoaded", () => {
     RifasUI.toast("Compartilhe o link da plataforma com seus contatos.");
   });
 
-  document.getElementById("logoutButton").addEventListener("click", async () => {
+  document.getElementById("logoutButton")?.addEventListener("click", async () => {
     try {
       await RifasAPI.logout();
     } catch (error) {

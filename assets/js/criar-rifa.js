@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       await RifasAPI.criarRifa(payload);
       RifasUI.toast("Rifa criada com sucesso.");
-      window.setTimeout(() => window.location.href = "dashboard.html", 700);
+      window.setTimeout(() => window.location.href = "dashboard.php", 700);
     } catch (error) {
       const demoRaffle = {
         ...payload,
@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
       };
       localStorage.setItem("rifas_demo_last", JSON.stringify(demoRaffle));
       RifasUI.toast("Formulario pronto. Crie api/rifas.php para salvar no banco.");
-      window.setTimeout(() => window.location.href = "dashboard.html", 900);
+      window.setTimeout(() => window.location.href = "dashboard.php", 900);
     }
   });
 });
