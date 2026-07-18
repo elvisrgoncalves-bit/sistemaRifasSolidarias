@@ -7,20 +7,24 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
     session_start();
 }
 
-function carregar_rifas_do_banco(?int $usuarioCriacao = null): array
+function carregar_rifas_do_banco(?int $usuarioCriacao = null, bool $apenasDoUsuario = false): array
 {
     $pdo = db();
-
-    if ($usuarioCriacao) {
-        $stmt = $pdo->prepare('SELECT * FROM rifa WHERE usuario_criacao = ? ORDER BY id DESC');
-        $stmt->execute([$usuarioCriacao]);
-    } else {
-        $stmt = $pdo->query('SELECT * FROM rifa ORDER BY id DESC');
-    }
+    $stmt = $pdo->query('SELECT * FROM rifa ORDER BY id DESC');
 
     $rifas = [];
 
     foreach ($stmt->fetchAll() as $rifa) {
+        $rifaUsuarioId = null;
+        $temColunaUsuarioCriacao = array_key_exists('usuario_criacao', $rifa);
+        if ($temColunaUsuarioCriacao) {
+            $rifaUsuarioId = (int) $rifa['usuario_criacao'];
+        }
+
+        if ($apenasDoUsuario && $usuarioCriacao !== null && $temColunaUsuarioCriacao && $rifaUsuarioId !== $usuarioCriacao) {
+            continue;
+        }
+
         $rifaId = (int) $rifa['id'];
 
         $numeroStmt = $pdo->prepare(
@@ -56,5 +60,6 @@ function carregar_rifas_do_banco(?int $usuarioCriacao = null): array
 }
 
 $usuarioLogadoId = isset($_SESSION['usuario_id']) ? (int) $_SESSION['usuario_id'] : null;
-$rifasDoBanco = carregar_rifas_do_banco($usuarioLogadoId);
+$rifasDoBanco = carregar_rifas_do_banco($usuarioLogadoId, true);
+$rifasAtivasDoBanco = carregar_rifas_do_banco();
 $rifaAtual = $rifasDoBanco[0] ?? null;

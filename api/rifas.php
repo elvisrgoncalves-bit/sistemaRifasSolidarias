@@ -33,15 +33,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $texto = $titulo !== '' ? $titulo : $descricao;
 
+    $usuarioId = current_user_id();
+    if ($usuarioId === null) {
+        json_error('Usuario nao autenticado.', 401);
+    }
+
     $pdo = db();
     $pdo->beginTransaction();
 
     try {
+        $colunaExiste = $pdo->query("SHOW COLUMNS FROM rifa LIKE 'usuario_criacao'")->fetch();
+        if (!$colunaExiste) {
+            $pdo->exec("ALTER TABLE rifa ADD COLUMN usuario_criacao bigint DEFAULT NULL");
+        }
+
         $stmt = $pdo->prepare(
-            'INSERT INTO rifa (descricao_rifa, valor_numero, quantidade_numero)
-             VALUES (?, ?, ?)'
+            'INSERT INTO rifa (descricao_rifa, valor_numero, quantidade_numero, usuario_criacao)
+             VALUES (?, ?, ?, ?)'
         );
-        $stmt->execute([$texto, $valor, $quantidade]);
+        $stmt->execute([$texto, $valor, $quantidade, $usuarioId]);
         $rifaId = (int) $pdo->lastInsertId();
 
         $numeroStmt = $pdo->prepare(

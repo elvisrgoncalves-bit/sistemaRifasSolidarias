@@ -4,7 +4,9 @@ if (!isset($activeNav)) {
 }
 
 $perfilUsuario = strtolower((string) ($_SESSION['perfil'] ?? ''));
-$mostrarDashboard = in_array($perfilUsuario, ['1', '2', 'admin', 'administrador', 'perfil 1', 'perfil 2'], true);
+$perfilUsuarioId = isset($_SESSION['perfil_id']) ? (string) $_SESSION['perfil_id'] : '';
+$mostrarDashboard = in_array($perfilUsuario, ['1', '2', 'admin', 'administrador', 'perfil 1', 'perfil 2', 'organizador'], true)
+  || in_array($perfilUsuarioId, ['1', '2'], true);
 ?>
 <aside class="sidebar">
   <a class="brand" href="dashboard.php" aria-label="Rifas Solidarias">

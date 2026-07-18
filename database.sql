@@ -28,7 +28,9 @@ CREATE TABLE IF NOT EXISTS rifa (
   descricao_rifa varchar(255) NOT NULL,
   valor_numero decimal(10,2) NOT NULL,
   quantidade_numero int NOT NULL,
-  PRIMARY KEY (id)
+  usuario_criacao bigint DEFAULT NULL,
+  PRIMARY KEY (id),
+  KEY fk_rifa_usuario (usuario_criacao)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS numero_rifa (

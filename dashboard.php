@@ -70,7 +70,6 @@ require_once __DIR__ . '/includes/header.php';
     <?php else: ?>
       <?php foreach ($rifasDoBanco as $rifa): ?>
         <article class="panel raffle-card" data-rifa-id="<?= (int) ($rifa['id'] ?? 0) ?>">
-          <div class="raffle-thumb"><i data-lucide="ticket-heart"></i></div>
           <div class="raffle-body">
             <span class="badge">Ativa</span>
             <h3><?= htmlspecialchars((string) ($rifa['titulo'] ?? 'Rifa sem nome')) ?></h3>

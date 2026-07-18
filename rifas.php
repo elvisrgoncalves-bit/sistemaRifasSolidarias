@@ -18,7 +18,7 @@ $rifaAtual = $rifaAtual ?? null;
 $rifaAtual = is_array($rifaAtual) ? $rifaAtual : [];
 
 $dadosRifaJson = json_encode(
-  $rifasDoBanco ?: [
+  $rifasAtivasDoBanco ?: [
     [
       'id' => 0,
       'titulo' => 'Nenhuma rifa cadastrada',
@@ -44,9 +44,8 @@ require_once __DIR__ . '/includes/header.php';
     </section>
 
     <div class="raffles-list">
-      <?php if (empty($rifasDoBanco)): ?>
+      <?php if (empty($rifasAtivasDoBanco)): ?>
         <article class="panel raffle-card">
-          <div class="raffle-thumb"><i data-lucide="ticket-heart"></i></div>
           <div class="raffle-body">
             <span class="badge">Sem rifas</span>
             <h3 id="raffleTitle">Nenhuma rifa cadastrada</h3>
@@ -54,9 +53,8 @@ require_once __DIR__ . '/includes/header.php';
           </div>
         </article>
       <?php else: ?>
-        <?php foreach ($rifasDoBanco as $rifa): ?>
+        <?php foreach ($rifasAtivasDoBanco as $rifa): ?>
           <article class="panel raffle-card" data-rifa-id="<?= (int) ($rifa['id'] ?? 0) ?>">
-            <div class="raffle-thumb"><i data-lucide="ticket-heart"></i></div>
             <div class="raffle-body">
               <span class="badge">Ativa</span>
               <h3><?= htmlspecialchars((string) ($rifa['titulo'] ?? 'Rifa sem nome')) ?></h3>

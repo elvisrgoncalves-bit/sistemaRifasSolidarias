@@ -39,6 +39,7 @@ if (!$senhaValida) {
 $_SESSION['usuario_id'] = (int) $usuario['id'];
 $_SESSION['nome'] = (string) $usuario['nome'];
 $_SESSION['perfil'] = (string) ($usuario['perfil'] ?? '');
+$_SESSION['perfil_id'] = (string) ($usuario['id_perfil'] ?? '');
 
 json_response([
     'id' => (int) $usuario['id'],

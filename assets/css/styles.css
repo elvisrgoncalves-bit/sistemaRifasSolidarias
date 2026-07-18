@@ -701,22 +701,13 @@ textarea {
 
 .raffle-card {
   display: grid;
-  grid-template-columns: 150px minmax(0, 1fr) 150px;
-  gap: 22px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 16px;
+  align-items: start;
 }
 
-.raffle-thumb {
-  min-height: 162px;
-  display: grid;
-  place-items: center;
-  color: var(--primary);
-  border-radius: var(--radius);
-  background: var(--primary-soft);
-}
-
-.raffle-thumb svg {
-  width: 78px;
-  height: 78px;
+.raffle-card .raffle-body {
+  min-width: 0;
 }
 
 .badge {
@@ -737,13 +728,13 @@ textarea {
 }
 
 .raffle-card p {
-  margin: 0 0 24px;
+  margin: 0 0 18px;
 }
 
 .raffle-meta {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 18px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
 }
 
 .raffle-meta span,
@@ -785,11 +776,13 @@ textarea {
 }
 
 .raffle-actions {
-  display: grid;
-  align-content: start;
-  gap: 14px;
-  padding-left: 22px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 10px;
+  padding-left: 16px;
   border-left: 1px solid var(--line);
+  min-width: 150px;
 }
 
 .tip {
