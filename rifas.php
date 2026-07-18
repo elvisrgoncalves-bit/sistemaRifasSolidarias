@@ -10,7 +10,7 @@ require_once __DIR__ . '/api/rifas-dados.php';
 
 $pageTitle = 'Rifas | Rifas Solidarias';
 $pageHeading = 'Bem-vindo, <span id="userName">' . htmlspecialchars($_SESSION['nome'] ?? 'Usuário') . '</span>!';
-$pageSubtitle = 'Gerencie suas rifas e acompanhe seus resultados.';
+$pageSubtitle = 'Colabore com os projetos da comunidade.';
 $activeNav = 'rifas';
 $showTopbarActions = true;
 
@@ -27,7 +27,7 @@ $dadosRifaJson = json_encode(
       'quantidadeNumero' => 0,
       'reservados' => 0,
       'dataSorteio' => 'A definir',
-      'linkPublico' => '',
+      'usuarioCriacao' => '',
       'numeros' => [],
     ],
   ],
@@ -58,7 +58,13 @@ require_once __DIR__ . '/includes/header.php';
             <div class="raffle-body">
               <span class="badge">Ativa</span>
               <h3><?= htmlspecialchars((string) ($rifa['titulo'] ?? 'Rifa sem nome')) ?></h3>
-              <p><?= htmlspecialchars((string) ($rifa['descricao'] ?? '')) ?></p>
+              <div class="raffle-creator">
+                <p><span>Criador: </span><strong><?= htmlspecialchars((string) ($rifa['usuarioCriacao'] ?? '')) ?></strong></p>
+                <?php if (!empty($rifa['usuarioCriacaoTelefone'])): ?>
+                  <p><span>Telefone: </span><strong><?= htmlspecialchars((string) $rifa['usuarioCriacaoTelefone']) ?></strong></p>
+                <?php endif; ?>
+              </div>
+              <!-- <p><?= htmlspecialchars((string) ($rifa['descricao'] ?? '')) ?></p> -->
               <div class="raffle-meta">
                 <div><span>Valor por número</span><strong><?= number_format((float) ($rifa['valorNumero'] ?? 0), 2, ',', '.') ?></strong></div>
                 <div><span>Números reservados</span><strong><?= (int) ($rifa['reservados'] ?? 0) ?> / <?= (int) ($rifa['quantidadeNumero'] ?? 0) ?></strong>
@@ -119,9 +125,5 @@ require_once __DIR__ . '/includes/header.php';
     </section>
   </aside>
 </section>
-
-<script id="initialRaffleData" type="application/json">
-  <?= $dadosRifaJson ?>
-</script>
 
 <?php require_once __DIR__ . '/includes/footer.php'; ?>
