@@ -125,5 +125,8 @@ require_once __DIR__ . '/includes/header.php';
     </section>
   </aside>
 </section>
+<script id="initialRaffleData" type="application/json">
+  <?= $dadosRifaJson ?>
+</script>
 
 <?php require_once __DIR__ . '/includes/footer.php'; ?>

@@ -9,7 +9,7 @@ require_once __DIR__ . '/api/usuario.php';
 
 $pageTitle = 'Usuários | Rifas Solidárias';
 $pageHeading = 'Bem-vindo, <span id="userName">' . htmlspecialchars($_SESSION['nome'] ?? 'Usuário') . '</span>!';
-$pageSubtitle = 'Visualize o seu perfil. Para se tornar um organizador, entre em contato com o administrador.';
+$pageSubtitle = 'Para se tornar um organizador, entre em contato com o administrador Na aba Ajuda.';
 $activeNav = 'usuario';
 $showTopbarActions = true;
 
@@ -22,7 +22,8 @@ require_once __DIR__ . '/includes/header.php';
     <section class="section-head" id="perfil">
       <h2>Perfil do usuário</h2>
 
-      <form id="raffleForm" class="form-grid" novalidate>
+      <form id="raffleForm" class="form-grid" action="api/atualizar_usuario.php"
+        method="POST">
 
         <label class="field span-2">
           <span>Nome</span>
@@ -92,6 +93,7 @@ require_once __DIR__ . '/includes/header.php';
             <input
               type="text"
               name="perfil"
+              disabled
               value="<?= htmlspecialchars($usuarioLogado['perfil'] ?? '') ?>"
               readonly>
           </span>
@@ -102,10 +104,12 @@ require_once __DIR__ . '/includes/header.php';
           <button class="btn btn-primary" type="submit">Salvar alterações</button>
         </div>
 
+        <p id="mensagem" class="form-message" aria-live="polite"></p>
       </form>
     </section>
   </main>
 
+  <script src="assets/js/atualizar_usuario.js"></script>
   <?php require_once __DIR__ . '/includes/footer.php'; ?>
 
   <script>
@@ -130,8 +134,6 @@ require_once __DIR__ . '/includes/header.php';
 
       return v;
     }
-
-    // Executa quando o DOM está pronto
     document.addEventListener("DOMContentLoaded", function () {
       const telefone = document.getElementById("telefone");
 
