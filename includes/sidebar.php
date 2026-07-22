@@ -23,6 +23,6 @@ $mostrarDashboard = in_array($perfilUsuario, ['1', '2', 'admin', 'administrador'
     <?php endif; ?>
     <a class="<?= $activeNav === 'rifas' ? 'active' : '' ?>" href="rifas.php"><i data-lucide="binary"></i>Rifas</a>
     <a href="usuario.php"><i data-lucide="user"></i>Usuário</a>
-    <a href="#ajuda"><i data-lucide="circle-help"></i>Ajuda</a>
+    <a href="ajuda.php"><i data-lucide="circle-help"></i>Ajuda</a>
   </nav>
 </aside>
